@@ -410,7 +410,7 @@ typedef struct {
  * to a variable of this type is then passed to the driver API functions.
  */
 typedef struct {
-	XSpi_Stats Stats;	/**< Statistics */
+	//XSpi_Stats Stats;	/**< Statistics */
 	UINTPTR BaseAddr;		/**< Base address of device (IPIF) */
 	int IsReady;		/**< Device is initialized and ready */
 	int IsStarted;		/**< Device has been started */

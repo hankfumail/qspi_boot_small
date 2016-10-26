@@ -117,8 +117,8 @@
 
 /************************** Function Prototypes ******************************/
 
-static void StubStatusHandler(void *CallBackRef, u32 StatusEvent,
-				unsigned int ByteCount);
+//static void StubStatusHandler(void *CallBackRef, u32 StatusEvent,
+//				unsigned int ByteCount);
 
 void XSpi_Abort(XSpi *InstancePtr);
 
@@ -215,6 +215,7 @@ int XSpi_CfgInitialize(XSpi *InstancePtr, XSpi_Config *Config,
 	InstancePtr->SlaveSelectMask = (1 << InstancePtr->NumSlaveBits) - 1;
 	InstancePtr->SlaveSelectReg = InstancePtr->SlaveSelectMask;
 
+#if 0
 	/*
 	 * Clear the statistics for this driver.
 	 */
@@ -224,7 +225,7 @@ int XSpi_CfgInitialize(XSpi *InstancePtr, XSpi_Config *Config,
 	InstancePtr->Stats.SlaveModeFaults = 0;
 	InstancePtr->Stats.BytesTransferred = 0;
 	InstancePtr->Stats.NumInterrupts = 0;
-	
+#endif
         if(Config->Use_Startup == 1) {
 		/*  
 		 * Perform a dummy read this is used when startup block is
@@ -757,8 +758,8 @@ int XSpi_Transfer(XSpi *InstancePtr, u8 *SendBufPtr,
 						InstancePtr->RecvBufferPtr += 4;
 					}
 				}
-				InstancePtr->Stats.BytesTransferred +=
-						(DataWidth >> 3);
+				//InstancePtr->Stats.BytesTransferred +=
+				//		(DataWidth >> 3);
 				ByteCount -= (DataWidth >> 3);
 				StatusReg = XSpi_GetStatusReg(InstancePtr);
 			}

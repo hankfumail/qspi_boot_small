@@ -67,7 +67,7 @@
 
 
 #include "platform.h"
-#include "xil_printf.h"
+//#include "xil_printf.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -203,7 +203,7 @@ typedef void (*XilAppEntry)(void *data);
 #define print_flush_func	 
 //#define print_flush_func	 fflush(stdout);
 
-#if 1
+#if 0
 #define err_print(format,args...) 			do { print_func(format, ##args); print_flush_func; }while(0)
 
 #else
