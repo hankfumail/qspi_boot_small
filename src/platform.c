@@ -31,7 +31,7 @@
 ******************************************************************************/
 
 #include "xparameters.h"
-//#include "xil_cache.h"
+#include "xil_cache.h"
 
 #include "platform_config.h"
 
@@ -61,7 +61,7 @@ enable_caches()
     Xil_ICacheEnable();
 #endif
 #ifdef XPAR_MICROBLAZE_USE_DCACHE
-    //Xil_DCacheEnable();
+    Xil_DCacheEnable();
 #endif
 #endif
 }
