@@ -213,7 +213,7 @@ typedef struct {
  * to a variable of this type is then passed to the driver API functions.
  */
 typedef struct {
-	XUartLite_Stats Stats;		/* Component Statistics */
+	//XUartLite_Stats Stats;		/* Component Statistics */
 	UINTPTR RegBaseAddress;		/* Base address of registers */
 	u32 IsReady;			/* Device is initialized and ready */
 

@@ -174,7 +174,7 @@ int XUartLite_CfgInitialize(XUartLite *InstancePtr, XUartLite_Config *Config,
 	/*
 	 * Clear the statistics for this driver
 	 */
-	XUartLite_ClearStats(InstancePtr);
+	//XUartLite_ClearStats(InstancePtr);
 
 	return XST_SUCCESS;
 }
@@ -530,7 +530,7 @@ unsigned int XUartLite_SendBuffer(XUartLite *InstancePtr)
 	/*
 	 * Increment associated counters
 	 */
-	 InstancePtr->Stats.CharactersTransmitted += SentCount;
+	 //InstancePtr->Stats.CharactersTransmitted += SentCount;
 
 	/*
 	 * Restore the interrupt enable register to it's previous value such
@@ -615,7 +615,7 @@ unsigned int XUartLite_ReceiveBuffer(XUartLite *InstancePtr)
 				XUartLite_ReadReg(InstancePtr->RegBaseAddress,
 							XUL_RX_FIFO_OFFSET);
 
-			XUartLite_UpdateStats(InstancePtr, StatusRegister);
+			//XUartLite_UpdateStats(InstancePtr, StatusRegister);
 		}
 
 		/*
@@ -637,7 +637,7 @@ unsigned int XUartLite_ReceiveBuffer(XUartLite *InstancePtr)
 	/*
 	 * Increment associated counters in the statistics
 	 */
-	InstancePtr->Stats.CharactersReceived += ReceivedCount;
+	//InstancePtr->Stats.CharactersReceived += ReceivedCount;
 
 	/*
 	 * Restore the interrupt enable register to it's previous value such
