@@ -184,7 +184,7 @@ int XSpi_CfgInitialize(XSpi *InstancePtr, XSpi_Config *Config,
 	InstancePtr->IsStarted = 0;
 	InstancePtr->IsBusy = FALSE;
 
-	InstancePtr->StatusHandler = StubStatusHandler;
+	//InstancePtr->StatusHandler = StubStatusHandler;
 
 	InstancePtr->SendBufferPtr = NULL;
 	InstancePtr->RecvBufferPtr = NULL;
@@ -960,6 +960,7 @@ u32 XSpi_GetSlaveSelect(XSpi *InstancePtr)
 	return ~InstancePtr->SlaveSelectReg;
 }
 
+#if 0
 /*****************************************************************************/
 /**
 *
@@ -1043,7 +1044,9 @@ static void StubStatusHandler(void *CallBackRef, u32 StatusEvent,
 	(void ) ByteCount;
 	Xil_AssertVoidAlways();
 }
+#endif
 
+#if 0
 /*****************************************************************************/
 /**
 *
@@ -1339,6 +1342,8 @@ void XSpi_InterruptHandler(void *InstancePtr)
 				XST_SPI_COMMAND_ERROR, BytesDone);
 	}
 }
+
+#endif
 
 /*****************************************************************************/
 /**

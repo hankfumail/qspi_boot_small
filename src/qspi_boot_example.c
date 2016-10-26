@@ -212,7 +212,7 @@ typedef void (*XilAppEntry)(void *data);
 
 #endif
 
-#if 1
+#if 0
 #define dbg_print(format,args...) 			do { print_func(format, ##args); print_flush_func; }while(0)
 #define dbg_print_line( format,args...) 	do {  print_func("Func: %16s line:%6d: ", __func__, __LINE__);  print_func(format, ##args); print_flush_func; }while(0)
 #define dbg_print_var_hex(xxx) 					do {  print_func( "%s = 0x%08x\r\n", #xxx, (unsigned int)xxx ); }while(0)
@@ -369,7 +369,7 @@ int main(void)
 	 * driver instance as the callback reference so the handler is able to
 	 * access the instance data.
 	 */
-	XSpi_SetStatusHandler(&Spi, &Spi, (XSpi_StatusHandler)SpiHandler);
+	//XSpi_SetStatusHandler(&Spi, &Spi, (XSpi_StatusHandler)SpiHandler);
 
 	/*
 	 * Set the SPI device as a master and in manual slave select mode such
@@ -1072,6 +1072,7 @@ int SpiFlashWaitForFlashReady(void)
 	return XST_SUCCESS;
 }
 
+#if 0
 /*****************************************************************************/
 /**
 *
@@ -1110,6 +1111,7 @@ void SpiHandler(void *CallBackRef, u32 StatusEvent, unsigned int ByteCount)
 		ErrorCount++;
 	}
 }
+#endif
 
 #if 0
 /*****************************************************************************/
