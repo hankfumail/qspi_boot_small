@@ -245,7 +245,7 @@ int SpiFlashQuadEnable(XSpi *SpiPtr);
 int SpiFlashEnableHPM(XSpi *SpiPtr);
 static int SpiFlashWaitForFlashReady(void);
 void SpiHandler(void *CallBackRef, u32 StatusEvent, unsigned int ByteCount);
-static int SetupInterruptSystem(XSpi *SpiPtr);
+//static int SetupInterruptSystem(XSpi *SpiPtr);
 
 /************************** Variable Definitions *****************************/
 
@@ -255,13 +255,13 @@ static int SetupInterruptSystem(XSpi *SpiPtr);
  * but should at least be static so they are zeroed.
  */
 static XSpi Spi;
-INTC InterruptController;
+//INTC InterruptController;
 
 /*
  * The following variables are shared between non-interrupt processing and
  * interrupt processing such that they must be global.
  */
-volatile static int TransferInProgress;
+//volatile static int TransferInProgress;
 
 /*
  * The following variable tracks any errors that occur during interrupt
@@ -279,7 +279,7 @@ static u8 WriteBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES];
  * Byte offset value written to Flash. This needs to be redefined for writing
  * different patterns of data to the Flash device.
  */
-static u8 TestByte = 0x20;
+//static u8 TestByte = 0x20;
 
 u32 u32_boot_vector_backup_content[ QSPI_BOOT_VECTOR_SIZE/sizeof(u32) ]={};
 
@@ -357,6 +357,7 @@ int main(void)
 		return XST_FAILURE;
 	}
 
+#if 0
 	/*
 	 * Connect the SPI driver to the interrupt subsystem such that
 	 * interrupts can occur. This function is application specific.
@@ -366,6 +367,8 @@ int main(void)
     	err_print("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
+	
+#endif
 
 	/*
 	 * Setup the handler for the SPI that will be called from the interrupt
@@ -402,7 +405,7 @@ int main(void)
 	 */
 	XSpi_Start(&Spi);
 
-	FlashReadID( &Spi );
+	//FlashReadID( &Spi );
 
 	// Check Flash status
 	Status = SpiFlashGetStatus( &Spi );
@@ -487,6 +490,7 @@ int main(void)
 	return XST_SUCCESS;
 }
 
+#if 0
 
 /******************************************************************************
 *
@@ -517,7 +521,7 @@ int FlashReadID(XSpi *SpiPtr)
     	/*
     	 * Initiate the Transfer.
     	 */
-    	TransferInProgress = TRUE;
+    	//TransferInProgress = TRUE;
     	Status = XSpi_Transfer(SpiPtr, WriteBuffer, ReadBuffer,
     			RD_ID_SIZE);
     	if(Status != XST_SUCCESS) {
@@ -529,7 +533,7 @@ int FlashReadID(XSpi *SpiPtr)
     	 * Wait till the Transfer is complete and check if there are any errors
     	 * in the transaction..
     	 */
-    	while(TransferInProgress);
+    	//while(TransferInProgress);
     	if(ErrorCount != 0) {
         	err_print("Error at Line: %d\n\r", __LINE__ );
     		ErrorCount = 0;
@@ -551,6 +555,9 @@ int FlashReadID(XSpi *SpiPtr)
 	return XST_SUCCESS;
 }
 
+#endif
+
+#if 0
 
 /*****************************************************************************/
 /**
@@ -584,7 +591,7 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 	/*
 	 * Initiate the Transfer.
 	 */
-	TransferInProgress = TRUE;
+	//TransferInProgress = TRUE;
 	Status = XSpi_Transfer(SpiPtr, WriteBuffer, NULL,
 				WRITE_ENABLE_BYTES);
 	if(Status != XST_SUCCESS) {
@@ -596,7 +603,7 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction..
 	 */
-	while(TransferInProgress);
+	//while(TransferInProgress);
 	if(ErrorCount != 0) {
     	err_print("Error at Line: %d\n\r", __LINE__ );
 		ErrorCount = 0;
@@ -655,7 +662,7 @@ int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd)
 	/*
 	 * Initiate the Transfer.
 	 */
-	TransferInProgress = TRUE;
+	//TransferInProgress = TRUE;
 	Status = XSpi_Transfer(SpiPtr, WriteBuffer, NULL,
 				(ByteCount + READ_WRITE_EXTRA_BYTES));
 	if(Status != XST_SUCCESS) {
@@ -666,7 +673,7 @@ int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction.
 	 */
-	while(TransferInProgress);
+	//while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
     	err_print("Error at Line: %d\n\r", __LINE__ );
@@ -675,6 +682,8 @@ int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd)
 
 	return XST_SUCCESS;
 }
+
+#endif
 
 /*****************************************************************************/
 /**
@@ -725,7 +734,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd)
 	/*
 	 * Initiate the Transfer.
 	 */
-	TransferInProgress = TRUE;
+	//TransferInProgress = TRUE;
 	Status = XSpi_Transfer( SpiPtr, WriteBuffer, ReadBuffer,
 				(ByteCount + READ_WRITE_EXTRA_BYTES));
 	if(Status != XST_SUCCESS) {
@@ -737,7 +746,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction.
 	 */
-	while(TransferInProgress);
+	//while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
     	err_print("Error at Line: %d\n\r", __LINE__ );
@@ -853,6 +862,7 @@ int SpiFlashReadLong(XSpi *SpiPtr, u8 *ReadBuff, u32 Addr, u32 ByteCount)
 	return XST_SUCCESS;
 }
 
+#if 0
 
 /*****************************************************************************/
 /**
@@ -887,7 +897,7 @@ int SpiFlashBulkErase(XSpi *SpiPtr)
 	/*
 	 * Initiate the Transfer.
 	 */
-	TransferInProgress = TRUE;
+	//TransferInProgress = TRUE;
 	Status = XSpi_Transfer(SpiPtr, WriteBuffer, NULL,
 						BULK_ERASE_BYTES);
 	if(Status != XST_SUCCESS) {
@@ -899,7 +909,7 @@ int SpiFlashBulkErase(XSpi *SpiPtr)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction..
 	 */
-	while(TransferInProgress);
+	//while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
     	err_print("Error at Line: %d\n\r", __LINE__ );
@@ -948,7 +958,7 @@ int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr)
 	/*
 	 * Initiate the Transfer.
 	 */
-	TransferInProgress = TRUE;
+	//TransferInProgress = TRUE;
 	Status = XSpi_Transfer(SpiPtr, WriteBuffer, NULL,
 					SECTOR_ERASE_BYTES);
 	if(Status != XST_SUCCESS) {
@@ -960,7 +970,7 @@ int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction..
 	 */
-	while(TransferInProgress);
+	//while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
     	err_print("Error at Line: %d\n\r", __LINE__ );
@@ -969,6 +979,8 @@ int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr)
 
 	return XST_SUCCESS;
 }
+
+#endif
 
 /*****************************************************************************/
 /**
@@ -997,7 +1009,7 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	/*
 	 * Initiate the Transfer.
 	 */
-	TransferInProgress = TRUE;
+	//TransferInProgress = TRUE;
 	Status = XSpi_Transfer(SpiPtr, WriteBuffer, ReadBuffer,
 						STATUS_READ_BYTES);
 	if(Status != XST_SUCCESS) {
@@ -1009,7 +1021,7 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction..
 	 */
-	while(TransferInProgress);
+	//while(TransferInProgress);
 	if(ErrorCount != 0) {
     	err_print("Error at Line: %d\n\r", __LINE__ );
 		ErrorCount = 0;
@@ -1095,7 +1107,7 @@ void SpiHandler(void *CallBackRef, u32 StatusEvent, unsigned int ByteCount)
 	 * Indicate the transfer on the SPI bus is no longer in progress
 	 * regardless of the status event.
 	 */
-	TransferInProgress = FALSE;
+	//TransferInProgress = FALSE;
 
 	/*
 	 * If the event was not transfer done, then track it as an error.
@@ -1106,6 +1118,7 @@ void SpiHandler(void *CallBackRef, u32 StatusEvent, unsigned int ByteCount)
 	}
 }
 
+#if 0
 /*****************************************************************************/
 /**
 *
@@ -1230,3 +1243,6 @@ static int SetupInterruptSystem(XSpi *SpiPtr)
 
 	return XST_SUCCESS;
 }
+
+#endif
+

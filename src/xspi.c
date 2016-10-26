@@ -335,7 +335,7 @@ int XSpi_Start(XSpi *InstancePtr)
 	/*
 	 * Enable the Global Interrupt Enable just after we start.
 	 */
-	XSpi_IntrGlobalEnable(InstancePtr);
+	//XSpi_IntrGlobalEnable(InstancePtr);
 
 	return XST_SUCCESS;
 }
@@ -587,7 +587,7 @@ int XSpi_Transfer(XSpi *InstancePtr, u8 *SendBufPtr,
 				InstancePtr->SlaveSelectMask) {
 				if (GlobalIntrReg == TRUE) {
 					/* Interrupt Mode of operation */
-					XSpi_IntrGlobalEnable(InstancePtr);
+					//XSpi_IntrGlobalEnable(InstancePtr);
 				}
 				return XST_SPI_NO_SLAVE;
 			}
@@ -663,6 +663,7 @@ int XSpi_Transfer(XSpi *InstancePtr, u8 *SendBufPtr,
 	ControlReg &= ~XSP_CR_TRANS_INHIBIT_MASK;
 	XSpi_SetControlReg(InstancePtr, ControlReg);
 
+#if 0
 	/*
 	 * If the interrupts are enabled as indicated by Global Interrupt
 	 * Enable Register, then enable the transmit empty interrupt to operate
@@ -679,9 +680,11 @@ int XSpi_Transfer(XSpi *InstancePtr, u8 *SendBufPtr,
 		/*
 		 * End critical section.
 		 */
-		XSpi_IntrGlobalEnable(InstancePtr);
+		//XSpi_IntrGlobalEnable(InstancePtr);
 
-	} else { /* Polled mode of operation */
+	} else
+#endif
+	{ /* Polled mode of operation */
 
 		/*
 		 * If interrupts are not enabled, poll the status register to
