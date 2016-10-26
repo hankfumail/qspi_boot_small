@@ -63,15 +63,8 @@
 
 #include "xparameters.h"	/* EDK generated parameters */
 #include "xspi.h"		/* SPI device driver */
-#include "xil_exception.h"
+//#include "xil_exception.h"
 
-#ifdef XPAR_INTC_0_DEVICE_ID
-#include "xintc.h"
-#include <stdio.h>
-#else  /* SCU GIC */
-#include "xscugic.h"
-#include "xil_printf.h"
-#endif
 
 #include "platform.h"
 #include "xil_printf.h"
