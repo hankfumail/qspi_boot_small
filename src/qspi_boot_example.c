@@ -206,7 +206,7 @@ typedef void (*XilAppEntry)(void *data);
 
 /***************** Macros (Inline Functions) Definitions *********************/
 
-#define print_var_hex(xxx) 					printf( "%s = 0x%08x\r\n", #xxx, (unsigned int)xxx )
+#define print_var_hex(xxx) 					xil_printf( "%s = 0x%08x\r\n", #xxx, (unsigned int)xxx )
 
 /************************** Function Prototypes ******************************/
 int FlashReadID(XSpi *SpiPtr);
@@ -288,11 +288,11 @@ int main(void)
 
     init_platform();
 
-    printf("\n\rQSPI boot test in %s, %s, %s\n\r", __FILE__, __DATE__, __TIME__ );
+    xil_printf("\n\rQSPI boot test in %s, %s, %s\n\r", __FILE__, __DATE__, __TIME__ );
 	print_var_hex(__rodata_start);
 	print_var_hex(__rodata_end);
 	if ( (u32)__rodata_start > QSPI_BOOT_APP_ADDR) {
-    	printf("Warning: Boot is in DDR memory.\n\rError at Line: %d\n\r", __LINE__ );
+    	xil_printf("Warning: Boot is in DDR memory.\n\rError at Line: %d\n\r", __LINE__ );
     	fflush(stdout);
 	}
 
@@ -306,13 +306,13 @@ int main(void)
 			&& ( 0 == u32_boot_vector_backup_content[4] )    )
     {
     	// backup
-    	printf("Backup boot vector at Line: %d\n\r", __LINE__ );  fflush(stdout);
+    	xil_printf("Backup boot vector at Line: %d\n\r", __LINE__ );  fflush(stdout);
     	memcpy( u32_boot_vector_backup_content, (void *)QSPI_BOOT_ROM_ADDR, QSPI_BOOT_VECTOR_SIZE);
     }
     else
     {
     	// restore
-    	printf("Restore boot vector at Line: %d\n\r", __LINE__ );  fflush(stdout);
+    	xil_printf("Restore boot vector at Line: %d\n\r", __LINE__ );  fflush(stdout);
     	memcpy( (void *)QSPI_BOOT_ROM_ADDR, u32_boot_vector_backup_content, QSPI_BOOT_VECTOR_SIZE);
     }
 #endif
@@ -323,7 +323,7 @@ int main(void)
 	 */
 	ConfigPtr = XSpi_LookupConfig(SPI_DEVICE_ID);
 	if (ConfigPtr == NULL) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
     	fflush(stdout);
 		return XST_DEVICE_NOT_FOUND;
 	}
@@ -331,7 +331,7 @@ int main(void)
 	Status = XSpi_CfgInitialize(&Spi, ConfigPtr,
 				  ConfigPtr->BaseAddress);
 	if (Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
     	fflush(stdout);
 		return XST_FAILURE;
 	}
@@ -342,7 +342,7 @@ int main(void)
 	 */
 	Status = SetupInterruptSystem(&Spi);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
     	fflush(stdout);
 		return XST_FAILURE;
 	}
@@ -363,7 +363,7 @@ int main(void)
 	Status = XSpi_SetOptions(&Spi, XSP_MASTER_OPTION |
 				 XSP_MANUAL_SSELECT_OPTION);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
+    	xil_printf("Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
 		return XST_FAILURE;
 	}
 
@@ -373,7 +373,7 @@ int main(void)
 	 */
 	Status = XSpi_SetSlaveSelect(&Spi, SPI_SELECT);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
+    	xil_printf("Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
 		return XST_FAILURE;
 	}
 
@@ -387,38 +387,38 @@ int main(void)
 	// Check Flash status
 	Status = SpiFlashGetStatus( &Spi );
 	if(Status != XST_SUCCESS) {
-    	printf("SpiFlashGetStatus Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
+    	xil_printf("SpiFlashGetStatus Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
 		return XST_FAILURE;
 	}
-	printf("SpiFlashGetStatus done at Line: %d\n\r", __LINE__ );
+	xil_printf("SpiFlashGetStatus done at Line: %d\n\r", __LINE__ );
 	fflush(stdout);
 
 	// Clear DDR
 	memset((void *)QSPI_BOOT_APP_ADDR, 0, QSPI_BOOT_APP_SIZE);
-	printf("DDR is cleared in Boot at Line: %d\n\r", __LINE__ );
+	xil_printf("DDR is cleared in Boot at Line: %d\n\r", __LINE__ );
 		
 	// read application header.
-	printf("Begin to load application header in Boot at Line: %d\n\r", __LINE__ );
+	xil_printf("Begin to load application header in Boot at Line: %d\n\r", __LINE__ );
 	Status = SpiFlashRead(&Spi, QSPI_BOOT_FLASH_ADDR,
 					PAGE_SIZE, QSPI_BOOT_READ_CMD);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
 	// 0x50: magic word, 'xlnx'= 78 6c 6e 78 .
 	pu32_magic = (u32 *)&ReadBuffer[QSPI_BOOT_DUMMY_BYTES+0x50];
 	if( pu32_magic[0] != 0x786c6e78 ) {
-		printf("Application header magic word is wrong, %lu=0x%08x\n\r", pu32_magic[0], (unsigned int)pu32_magic[0] );
+		xil_printf("Application header magic word is wrong, %lu=0x%08x\n\r", pu32_magic[0], (unsigned int)pu32_magic[0] );
 	}
 	else {
-		printf("Application header magic word is correct, %lu=0x%08x\n\r", pu32_magic[0], (unsigned int)pu32_magic[0] );
+		xil_printf("Application header magic word is correct, %lu=0x%08x\n\r", pu32_magic[0], (unsigned int)pu32_magic[0] );
 	}
 
 	pu32_app_len = (u32 *)&ReadBuffer[QSPI_BOOT_DUMMY_BYTES+0x60];
 	pu32_app_len = (u32 *)&ReadBuffer[QSPI_BOOT_DUMMY_BYTES+0x60];
-	printf("Application length 1: %lu=0x%08x\n\r", pu32_app_len[0], (unsigned int)pu32_app_len[0] );
-	printf("Application length 2: %lu=0x%08x\n\r", pu32_app_len[1], (unsigned int)pu32_app_len[1] );
+	xil_printf("Application length 1: %lu=0x%08x\n\r", pu32_app_len[0], (unsigned int)pu32_app_len[0] );
+	xil_printf("Application length 2: %lu=0x%08x\n\r", pu32_app_len[1], (unsigned int)pu32_app_len[1] );
 	
 
 	u32_app_len = QSPI_BOOT_APP_SIZE;
@@ -429,18 +429,18 @@ int main(void)
 			u32_app_len = pu32_app_len[0];
 		}
 	}
-	printf("Application length to be used: %lu=0x%08x\n\r", u32_app_len, (unsigned int)u32_app_len );
+	xil_printf("Application length to be used: %lu=0x%08x\n\r", u32_app_len, (unsigned int)u32_app_len );
 	
-	printf("Begin to load application in Boot at Line: %d\n\r", __LINE__ );
+	xil_printf("Begin to load application in Boot at Line: %d\n\r", __LINE__ );
 	Status = SpiFlashReadLong(&Spi, (u8 *)QSPI_BOOT_APP_ADDR, 
 					QSPI_BOOT_FLASH_ADDR, QSPI_BOOT_APP_SIZE);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
+    	xil_printf("Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
 		return XST_FAILURE;
 	}
-	printf("\n\rLoad application... Done at Line: %d.\n\r", __LINE__ );
+	xil_printf("\n\rLoad application... Done at Line: %d.\n\r", __LINE__ );
 
-	printf("Clear machine statue at Line: %d.\n\r", __LINE__ );
+	xil_printf("Clear machine statue at Line: %d.\n\r", __LINE__ );
 	//
 	/* Disable exceptions.	 */
 	Xil_ExceptionDisable();
@@ -459,7 +459,7 @@ int main(void)
 	
 	// Jump to application.
 	{
-		printf("Jump to application at Line: %d.\n\r", __LINE__ );
+		xil_printf("Jump to application at Line: %d.\n\r", __LINE__ );
 		XilAppEntry p_jump_func_ptr=(XilAppEntry)QSPI_BOOT_APP_ADDR;
 		p_jump_func_ptr(0);
 	}
@@ -502,7 +502,7 @@ int FlashReadID(XSpi *SpiPtr)
     	Status = XSpi_Transfer(SpiPtr, WriteBuffer, ReadBuffer,
     			RD_ID_SIZE);
     	if(Status != XST_SUCCESS) {
-        	printf("Error at Line: %d\n\r", __LINE__ );
+        	xil_printf("Error at Line: %d\n\r", __LINE__ );
     		return XST_FAILURE;
     	}
 
@@ -512,7 +512,7 @@ int FlashReadID(XSpi *SpiPtr)
     	 */
     	while(TransferInProgress);
     	if(ErrorCount != 0) {
-        	printf("Error at Line: %d\n\r", __LINE__ );
+        	xil_printf("Error at Line: %d\n\r", __LINE__ );
     		ErrorCount = 0;
     		return XST_FAILURE;
     	}
@@ -569,7 +569,7 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 	Status = XSpi_Transfer(SpiPtr, WriteBuffer, NULL,
 				WRITE_ENABLE_BYTES);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -579,7 +579,7 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 	 */
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		ErrorCount = 0;
 		return XST_FAILURE;
 	}
@@ -612,7 +612,7 @@ int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd)
 	 */
 	Status = SpiFlashWaitForFlashReady();
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -650,7 +650,7 @@ int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd)
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -681,7 +681,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd)
 	 */
 	Status = SpiFlashWaitForFlashReady();
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -710,7 +710,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd)
 	Status = XSpi_Transfer( SpiPtr, WriteBuffer, ReadBuffer,
 				(ByteCount + READ_WRITE_EXTRA_BYTES));
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -721,7 +721,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd)
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -755,18 +755,18 @@ int SpiFlashReadLong(XSpi *SpiPtr, u8 *ReadBuff, u32 Addr, u32 ByteCount)
 	u32 ByteCountCurrent;
 	int Status;
 
-	printf("QSPI boot read flash:0x%08x at Line:%d\n\r", (unsigned int)Addr, __LINE__ );
-	printf("WriteBuffer:0x%08x\n\r", (unsigned int)WriteBuffer );
-	printf("ReadBuffer:0x%08x\n\r", (unsigned int)ReadBuffer );
+	xil_printf("QSPI boot read flash:0x%08x at Line:%d\n\r", (unsigned int)Addr, __LINE__ );
+	xil_printf("WriteBuffer:0x%08x\n\r", (unsigned int)WriteBuffer );
+	xil_printf("ReadBuffer:0x%08x\n\r", (unsigned int)ReadBuffer );
 
 	AddrNext = Addr;
 	ByteCountLeft=ByteCount;
     for( i=0; ByteCountLeft>0; i++ )
     {
-    	//printf("No. %d QSPI boot read at Line:%d\n\r", i, __LINE__ );
-    	//printf("Old ByteCountLeft:%lu=0x%08x\n\r", ByteCountLeft, (unsigned int)ByteCountLeft );
+    	//xil_printf("No. %d QSPI boot read at Line:%d\n\r", i, __LINE__ );
+    	//xil_printf("Old ByteCountLeft:%lu=0x%08x\n\r", ByteCountLeft, (unsigned int)ByteCountLeft );
 		if( 0== (i%16) ) {
-			printf(".");
+			xil_printf(".");
 		}
     	//fflush(stdout);
 
@@ -779,20 +779,20 @@ int SpiFlashReadLong(XSpi *SpiPtr, u8 *ReadBuff, u32 Addr, u32 ByteCount)
 		AddrCurrent = AddrNext;
 		AddrNext += ByteCountCurrent;
 		ByteCountLeft -= ByteCountCurrent;
-    	//printf("AddrCurrent:%lu=0x%08x\n\r", AddrCurrent, (unsigned int)AddrCurrent );
-    	//printf("AddrNext:%lu=0x%08x\n\r", AddrNext, (unsigned int)AddrNext );
-    	//printf("ByteCountCurrent:%lu=0x%08x\n\r", ByteCountCurrent, (unsigned int)ByteCountCurrent );
-    	//printf("New ByteCountLeft:%lu=0x%08x\n\r", ByteCountLeft, (unsigned int)ByteCountLeft );
+    	//xil_printf("AddrCurrent:%lu=0x%08x\n\r", AddrCurrent, (unsigned int)AddrCurrent );
+    	//xil_printf("AddrNext:%lu=0x%08x\n\r", AddrNext, (unsigned int)AddrNext );
+    	//xil_printf("ByteCountCurrent:%lu=0x%08x\n\r", ByteCountCurrent, (unsigned int)ByteCountCurrent );
+    	//xil_printf("New ByteCountLeft:%lu=0x%08x\n\r", ByteCountLeft, (unsigned int)ByteCountLeft );
     	//fflush(stdout);
 
 		Status = SpiFlashRead(SpiPtr, AddrCurrent, ByteCountCurrent, QSPI_BOOT_READ_CMD);
 		if(Status != XST_SUCCESS) {
-	    	printf("Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
+	    	xil_printf("Error at Line: %d\n\r", __LINE__ ); fflush(stdout);
 			return XST_FAILURE;
 		}
 
 #if 1
-		printf("%02x %02x %02x %02x %02x %02x %02x %02x \n\r",
+		xil_printf("%02x %02x %02x %02x %02x %02x %02x %02x \n\r",
 				ReadBuffer[0 + QSPI_BOOT_DUMMY_BYTES],
 				ReadBuffer[1 + QSPI_BOOT_DUMMY_BYTES],
 				ReadBuffer[2 + QSPI_BOOT_DUMMY_BYTES],
@@ -859,7 +859,7 @@ int SpiFlashBulkErase(XSpi *SpiPtr)
 	 */
 	Status = SpiFlashWaitForFlashReady();
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -875,7 +875,7 @@ int SpiFlashBulkErase(XSpi *SpiPtr)
 	Status = XSpi_Transfer(SpiPtr, WriteBuffer, NULL,
 						BULK_ERASE_BYTES);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -886,7 +886,7 @@ int SpiFlashBulkErase(XSpi *SpiPtr)
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -917,7 +917,7 @@ int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr)
 	 */
 	Status = SpiFlashWaitForFlashReady();
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -936,7 +936,7 @@ int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr)
 	Status = XSpi_Transfer(SpiPtr, WriteBuffer, NULL,
 					SECTOR_ERASE_BYTES);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -947,7 +947,7 @@ int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr)
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -985,7 +985,7 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	Status = XSpi_Transfer(SpiPtr, WriteBuffer, ReadBuffer,
 						STATUS_READ_BYTES);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -995,12 +995,12 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	 */
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		ErrorCount = 0;
 		return XST_FAILURE;
 	}
 
-	//printf("SPI Flash Status: %02x\n\r", ReadBuffer[0 + 1] );
+	//xil_printf("SPI Flash Status: %02x\n\r", ReadBuffer[0 + 1] );
 
 	return XST_SUCCESS;
 }
@@ -1034,7 +1034,7 @@ int SpiFlashWaitForFlashReady(void)
 		 */
 		Status = SpiFlashGetStatus(&Spi);
 		if(Status != XST_SUCCESS) {
-	    	printf("Error at Line: %d\n\r", __LINE__ );
+	    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 			return XST_FAILURE;
 		}
 
@@ -1085,7 +1085,7 @@ void SpiHandler(void *CallBackRef, u32 StatusEvent, unsigned int ByteCount)
 	 * If the event was not transfer done, then track it as an error.
 	 */
 	if (StatusEvent != XST_SPI_TRANSFER_DONE) {
-    	printf("XST_SPI_TRANSFER_DONE Error: %d at Line: %d\n\r",ErrorCount,  __LINE__ );
+    	xil_printf("XST_SPI_TRANSFER_DONE Error: %d at Line: %d\n\r",ErrorCount,  __LINE__ );
 		ErrorCount++;
 	}
 }
@@ -1119,7 +1119,7 @@ static int SetupInterruptSystem(XSpi *SpiPtr)
 	 */
 	Status = XIntc_Initialize(&InterruptController, INTC_DEVICE_ID);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -1133,7 +1133,7 @@ static int SetupInterruptSystem(XSpi *SpiPtr)
 				(XInterruptHandler)XSpi_InterruptHandler,
 				(void *)SpiPtr);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
@@ -1144,7 +1144,7 @@ static int SetupInterruptSystem(XSpi *SpiPtr)
 	 */
 	Status = XIntc_Start(&InterruptController, XIN_REAL_MODE);
 	if(Status != XST_SUCCESS) {
-    	printf("Error at Line: %d\n\r", __LINE__ );
+    	xil_printf("Error at Line: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
 
