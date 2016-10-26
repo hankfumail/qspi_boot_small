@@ -31,7 +31,7 @@
 ******************************************************************************/
 
 #include "xparameters.h"
-#include "xil_cache.h"
+//#include "xil_cache.h"
 
 #include "platform_config.h"
 
@@ -49,6 +49,7 @@
  #define UART_BAUD 9600
 #endif
 
+#if 0
 void
 enable_caches()
 {
@@ -60,7 +61,7 @@ enable_caches()
     Xil_ICacheEnable();
 #endif
 #ifdef XPAR_MICROBLAZE_USE_DCACHE
-    Xil_DCacheEnable();
+    //Xil_DCacheEnable();
 #endif
 #endif
 }
@@ -71,6 +72,7 @@ disable_caches()
     Xil_DCacheDisable();
     Xil_ICacheDisable();
 }
+#endif
 
 void
 init_uart()
@@ -94,12 +96,12 @@ init_platform()
      */
     /* ps7_init();*/
     /* psu_init();*/
-    enable_caches();
+    //enable_caches();
     init_uart();
 }
 
 void
 cleanup_platform()
 {
-    disable_caches();
+    //disable_caches();
 }
