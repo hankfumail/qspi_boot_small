@@ -465,7 +465,7 @@ int main(void)
 	dbg_print("Clear machine statue at Line: %d.\n\r", __LINE__ );
 	//
 	/* Disable exceptions.	 */
-	Xil_ExceptionDisable();
+	//Xil_ExceptionDisable();
 
 	// clean branch target cache
 	mbar(0);
