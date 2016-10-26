@@ -97,6 +97,8 @@ void XUartLite_SendByte(UINTPTR BaseAddress, u8 Data)
 }
 
 
+
+#if 0
 /****************************************************************************/
 /**
 *
@@ -117,5 +119,7 @@ u8 XUartLite_RecvByte(UINTPTR BaseAddress)
 
 	return (u8)XUartLite_ReadReg(BaseAddress, XUL_RX_FIFO_OFFSET);
 }
+
+#endif
 
 /** @} */

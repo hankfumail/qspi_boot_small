@@ -262,6 +262,8 @@ unsigned int XUartLite_Send(XUartLite *InstancePtr, u8 *DataBufferPtr,
 }
 
 
+
+#if 0
 /****************************************************************************/
 /**
 *
@@ -343,6 +345,7 @@ unsigned int XUartLite_Recv(XUartLite *InstancePtr, u8 *DataBufferPtr,
 	return ReceivedCount;
 
 }
+#endif
 
 /****************************************************************************/
 /**
@@ -547,6 +550,7 @@ unsigned int XUartLite_SendBuffer(XUartLite *InstancePtr)
 	return SentCount;
 }
 
+#if 0
 /****************************************************************************/
 /**
 *
@@ -650,6 +654,6 @@ unsigned int XUartLite_ReceiveBuffer(XUartLite *InstancePtr)
 	return ReceivedCount;
 }
 
-
+#endif
 
 /** @} */
