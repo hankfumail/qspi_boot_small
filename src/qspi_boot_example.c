@@ -203,7 +203,7 @@ typedef void (*XilAppEntry)(void *data);
 #define print_flush_func	 
 //#define print_flush_func	 fflush(stdout);
 
-#if 1
+#if 0
 #define err_print(format,args...) 			do { print_func(format, ##args); print_flush_func; }while(0)
 
 #else
@@ -212,7 +212,7 @@ typedef void (*XilAppEntry)(void *data);
 
 #endif
 
-#if 1
+#if 0
 #define dbg_print(format,args...) 			do { print_func(format, ##args); print_flush_func; }while(0)
 #define dbg_print_line( format,args...) 	do {  print_func("Func: %16s line:%6d: ", __func__, __LINE__);  print_func(format, ##args); print_flush_func; }while(0)
 #define dbg_print_var_hex(xxx) 				do {  print_func( "%s = 0x%08x\r\n", #xxx, (unsigned int)xxx ); }while(0)
