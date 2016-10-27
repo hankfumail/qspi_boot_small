@@ -63,11 +63,11 @@
 
 #include "xparameters.h"	/* EDK generated parameters */
 #include "xspi.h"		/* SPI device driver */
-//#include "xil_exception.h"
+#include "xil_exception.h"
 
 
 #include "platform.h"
-//#include "xil_printf.h"
+#include "xil_printf.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -212,7 +212,7 @@ typedef void (*XilAppEntry)(void *data);
 
 #endif
 
-#if 0
+#if 1
 #define dbg_print(format,args...) 			do { print_func(format, ##args); print_flush_func; }while(0)
 #define dbg_print_line( format,args...) 	do {  print_func("Func: %16s line:%6d: ", __func__, __LINE__);  print_func(format, ##args); print_flush_func; }while(0)
 #define dbg_print_var_hex(xxx) 				do {  print_func( "%s = 0x%08x\r\n", #xxx, (unsigned int)xxx ); }while(0)
@@ -275,7 +275,8 @@ static int ErrorCount;
  * Buffers used during read and write transactions.
  */
 static u8 ReadBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES + 4];
-static u8 WriteBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES];
+//static u8 WriteBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES];  // 0nly 32 bytes is enough
+static u8 WriteBuffer[ 32 + READ_WRITE_EXTRA_BYTES];  // 0nly 32 bytes is enough
 
 /*
  * Byte offset value written to Flash. This needs to be redefined for writing
@@ -342,6 +343,7 @@ int main(void)
     	memcpy( (void *)QSPI_BOOT_ROM_ADDR, u32_boot_vector_backup_content, QSPI_BOOT_VECTOR_SIZE);
     }
 #endif
+   	dbg_print("Backup boot vector done at Line: %d\n\r", __LINE__ );
 
 	/*
 	 * Initialize the SPI driver so that it's ready to use,
@@ -353,6 +355,7 @@ int main(void)
     	err_put_str("Error at Line 0353: %d\n\r", __LINE__ );
 		return XST_DEVICE_NOT_FOUND;
 	}
+   	dbg_print("XSpi_LookupConfig done at Line: %d\n\r", __LINE__ );
 
 	Status = XSpi_CfgInitialize(&Spi, ConfigPtr,
 				  ConfigPtr->BaseAddress);
@@ -361,6 +364,7 @@ int main(void)
     	err_put_str("Error at Line 0362: %d\n\r", __LINE__ );
 		return XST_FAILURE;
 	}
+   	dbg_print("XSpi_CfgInitialize done at Line: %d\n\r", __LINE__ );
 
 #if 0
 	/*
@@ -396,6 +400,7 @@ int main(void)
     	err_put_str("Error at Line 0396: %d\n\r", __LINE__ ); 
 		return XST_FAILURE;
 	}
+   	dbg_print("XSpi_SetOptions done at Line: %d\n\r", __LINE__ );
 
 	/*
 	 * Select the quad flash device on the SPI bus, so that it can be
@@ -407,12 +412,16 @@ int main(void)
     	err_put_str("Error at Line 0407: %d\n\r", __LINE__ ); 
 		return XST_FAILURE;
 	}
+   	dbg_print("XSpi_SetSlaveSelect done at Line: %d\n\r", __LINE__ );
 
 	/*
 	 * Start the SPI driver so that interrupts and the device are enabled.
 	 */
 	XSpi_Start(&Spi);
+  	dbg_print("XSpi_Start done at Line: %d\n\r", __LINE__ );
+
 	XSpi_IntrGlobalDisable(&Spi);
+   	dbg_print("XSpi_IntrGlobalDisable done at Line: %d\n\r", __LINE__ );
 
 	//FlashReadID( &Spi );
 
@@ -478,7 +487,7 @@ int main(void)
 	dbg_print("Clear machine statue at Line: %d.\n\r", __LINE__ );
 	//
 	/* Disable exceptions.	 */
-	//Xil_ExceptionDisable();
+	Xil_ExceptionDisable();
 
 	// clean branch target cache
 	mbar(0);

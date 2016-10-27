@@ -55,6 +55,8 @@
 extern "C" {
 #endif
 
+// defined by Hank, in order to reduce size
+#define NDEBUG
 
 /***************************** Include Files *********************************/
 
