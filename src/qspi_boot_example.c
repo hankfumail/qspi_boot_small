@@ -330,6 +330,7 @@ int main(void)
 	/* Disable exceptions and interrupts.	 */
 	Xil_ExceptionDisable();
 
+    err_put_str("\n\rQSPI boot test 1027-1526 \n\r" );
     dbg_print("\n\rQSPI boot test in %s, %s, %s\n\r", __FILE__, __DATE__, __TIME__ );
 	dbg_print_var_hex(__rodata_start);
 	dbg_print_var_hex(__rodata_end);
