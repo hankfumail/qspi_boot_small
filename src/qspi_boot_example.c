@@ -292,6 +292,18 @@ extern int __rodata_end[];
 
 /************************** Function Definitions *****************************/
 
+// release version does not work if memcpy() is used.
+void mb_mem_cpy( u32 *pu32_dst, u32 *pu32_src, u32 u32_byte_len )
+{
+
+	int i;
+
+	for( i=0; i<u32_byte_len/sizeof(u32); i++ )
+	{
+		pu32_dst[i] = pu32_src[i];
+	}
+}
+
 /*****************************************************************************/
 /**
 *
@@ -315,6 +327,9 @@ int main(void)
 
     init_platform();
 
+	/* Disable exceptions and interrupts.	 */
+	Xil_ExceptionDisable();
+
     dbg_print("\n\rQSPI boot test in %s, %s, %s\n\r", __FILE__, __DATE__, __TIME__ );
 	dbg_print_var_hex(__rodata_start);
 	dbg_print_var_hex(__rodata_end);
@@ -334,13 +349,15 @@ int main(void)
     {
     	// backup
     	dbg_print("Backup boot vector at Line: %d\n\r", __LINE__ ); 
-    	memcpy( u32_boot_vector_backup_content, (void *)QSPI_BOOT_ROM_ADDR, QSPI_BOOT_VECTOR_SIZE);
+    	//memcpy( u32_boot_vector_backup_content, (void *)QSPI_BOOT_ROM_ADDR, QSPI_BOOT_VECTOR_SIZE);
+    	mb_mem_cpy( u32_boot_vector_backup_content, (u32 *)QSPI_BOOT_ROM_ADDR, QSPI_BOOT_VECTOR_SIZE );
     }
     else
     {
     	// restore
     	dbg_print("Restore boot vector at Line: %d\n\r", __LINE__ );  
-    	memcpy( (void *)QSPI_BOOT_ROM_ADDR, u32_boot_vector_backup_content, QSPI_BOOT_VECTOR_SIZE);
+    	//memcpy( (void *)QSPI_BOOT_ROM_ADDR, u32_boot_vector_backup_content, QSPI_BOOT_VECTOR_SIZE);
+    	mb_mem_cpy( (u32 *)QSPI_BOOT_ROM_ADDR, u32_boot_vector_backup_content, QSPI_BOOT_VECTOR_SIZE );
     }
 #endif
    	dbg_print("Backup boot vector done at Line: %d\n\r", __LINE__ );
@@ -485,9 +502,6 @@ int main(void)
 	dbg_print("\n\rLoad application... Done at Line: %d.\n\r", __LINE__ );
 
 	dbg_print("Clear machine statue at Line: %d.\n\r", __LINE__ );
-	//
-	/* Disable exceptions.	 */
-	Xil_ExceptionDisable();
 
 	// clean branch target cache
 	mbar(0);
