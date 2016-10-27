@@ -203,7 +203,7 @@ typedef void (*XilAppEntry)(void *data);
 #define print_flush_func	 
 //#define print_flush_func	 fflush(stdout);
 
-#if 0
+#if 1
 #define err_print(format,args...) 			do { print_func(format, ##args); print_flush_func; }while(0)
 
 #else
@@ -412,6 +412,7 @@ int main(void)
 	 * Start the SPI driver so that interrupts and the device are enabled.
 	 */
 	XSpi_Start(&Spi);
+	XSpi_IntrGlobalDisable(&Spi);
 
 	//FlashReadID( &Spi );
 
